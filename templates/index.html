@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Orçamento de produtos personalizados - Canecas e cadernos personalizados para presentear">
+    <title>Orçamento de Produtos Personalizados | Micheli Personalizados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f3e6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1d3c2d;
+        }
+
+        .menu a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .menu a:hover {
+            color: #1d3c2d;
+            text-decoration: underline;
+        }
+
+        .sobre-section {
+            background-color: #fff;
+            padding: 40px;
+            margin: 40px auto;
+            max-width: 1200px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .sobre-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sobre-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .sobre-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .sobre-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            height: auto;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #1d3c2d;
+        }
+
+        h1 {
+            margin: 20px 0;
+            font-size: 32px;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 50px;
+            padding: 40px;
+            flex-wrap: wrap;
+        }
+
+        .product-image {
+            width: 280px;
+            border-radius: 10px;
+            object-fit: cover;
+            height: auto;
+        }
+
+        .formulario {
+            background-color: #fff;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 400px;
+            max-width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #1d3c2d;
+            outline: 2px solid rgba(29, 60, 45, 0.3);
+        }
+
+        input:invalid, select:invalid {
+            border-color: #e74c3c;
+        }
+
+        button {
+            background-color: #1d3c2d;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #145e46;
+        }
+
+        button:focus {
+            outline: 2px solid rgba(29, 60, 45, 0.5);
+        }
+
+        footer {
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            color: #333;
+        }
+
+        footer div {
+            margin-bottom: 20px;
+            min-width: 200px;
+        }
+
+        .miniaturas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .miniaturas img {
+            width: 80px;
+            height: 80px;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            object-fit: cover;
+        }
+
+        .miniaturas img:hover {
+            transform: scale(1.05);
+        }
+
+        .miniaturas img.selecionado {
+            border-color: #1d3c2d;
+            transform: scale(1.05);
+        }
+
+        .grupo-campos {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            overflow: auto;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 700px;
+            animation: zoom 0.3s;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .close {
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close:hover {
+            color: #ccc;
+        }
+
+        .estampa-ampliada-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .estampa-ampliada {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 2px solid #1d3c2d;
+            display: none;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: #1d3c2d;
+            margin: 20px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .flash-message {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1d3c2d;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes zoom {
+            from {transform: scale(0.5);}
+            to {transform: scale(1);}
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+                padding: 20px;
+            }
+
+            .formulario {
+                width: 100%;
+            }
+
+            .header {
+                flex-direction: column;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .menu {
+                margin-top: 15px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .menu a {
+                margin: 5px 10px;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .sobre-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header" role="banner">
+        <div class="logo">MICHELI PERSONALIZADOS</div>
+        <nav class="menu" role="navigation" aria-label="Menu principal">
+            <a href="#inicio" onclick="mostrarSecao('inicio')" role="menuitem">Início</a>
+            <a href="#sobre" onclick="mostrarSecao('sobre')" role="menuitem">Sobre</a>
+            <a href="#produtos" onclick="mostrarSecao('produtos')" role="menuitem">Produtos</a>
+            <a href="#contato" onclick="mostrarSecao('contato')" role="menuitem">Contato</a>
+        </nav>
+    </header>
+
+    <section id="sobre" class="sobre-section">
+        <h2>Sobre Nós</h2>
+        <div class="sobre-content">
+            <div class="sobre-text">
+                <p>Sou pedagoga, com pós-graduação em Educação Especial e Análise do Desenvolvimento do Espectro Autista. Ao longo da minha trajetória trabalhando com crianças, percebi como pequenos detalhes do dia a dia podem fazer uma grande diferença no desenvolvimento da autonomia e no bem-estar dos pequenos.</p>
+                <p>Foi assim que surgiu a ideia das canecas personalizadas em acrílico: uma maneira divertida, segura e funcional de incentivar o uso pessoal de utensílios. Cada caneca é pensada com carinho, trazendo o personagem favorito da criança, tornando os momentos das refeições mais especiais e lúdicos.</p>
+            </div>
+        </div>
+    </section>
+
+    <main id="conteudo-principal" role="main">
+        <h1>Solicite seu Orçamento</h1>
+
+        <!-- Mensagens de status -->
+        <div id="status-message" class="flash-message"></div>
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Enviando seu orçamento...</p>
+        </div>
+
+        <div class="container">
+            <img id="produto-principal" class="product-image" src="static/tema_do_site.png" alt="Caneca personalizada - Produto selecionado" loading="lazy">
+
+            <form id="form-orcamento" class="formulario" method="POST" action="/enviar_orcamento" novalidate>
+                <!-- Token CSRF para segurança -->
+                <input type="hidden" name="csrf_token" id="csrf_token" value="">
+
+                <div class="section-title">Dados Pessoais</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo:</label>
+                        <input type="text" id="nome" name="nome" required aria-required="true" placeholder="Seu nome completo">
+                        <span class="error-message" id="nome-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefone">Telefone:</label>
+                        <input type="tel" id="telefone" name="telefone" required aria-required="true" placeholder="(XX) XXXX-XXXX">
+                        <span class="error-message" id="telefone-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required aria-required="true" placeholder="seu@email.com">
+                        <span class="error-message" id="email-error"></span>
+                    </div>
+                </div>
+
+                <div class="section-title">Endereço</div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 3;">
+                        <label for="rua">Rua/Avenida:</label>
+                        <input type="text" id="rua" name="rua" required aria-required="true" placeholder="Nome da rua">
+                        <span class="error-message" id="rua-error"></span>
+                    </div>
+
+                    <div class="form-group" style="flex: 1;">
+                        <label for="numero">Número:</label>
+                        <input type="text" id="numero" name="numero" required aria-required="true" placeholder="Nº">
+                        <span class="error-message" id="numero-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="complemento">Complemento:</label>
+                    <input type="text" id="complemento" name="complemento" placeholder="Apto, bloco, etc.">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bairro">Bairro:</label>
+                        <input type="text" id="bairro" name="bairro" required aria-required="true" placeholder="Seu bairro">
+                        <span class="error-message" id="bairro-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cep">CEP:</label>
+                        <input type="text" id="cep" name="cep" required aria-required="true" placeholder="XXXXX-XXX">
+                        <span class="error-message" id="cep-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 3;">
+                        <label for="cidade">Cidade:</label>
+                        <input type="text" id="cidade" name="cidade" required aria-required="true" placeholder="Sua cidade">
+                        <span class="error-message" id="cidade-error"></span>
+                    </div>
+
+                    <div class="form-group" style="flex: 1;">
+                        <label for="uf">UF:</label>
+                        <select id="uf" name="uf" required aria-required="true">
+                            <option value="">--</option>
+                            <option value="AC">AC</option>
+                            <option value="AL">AL</option>
+                            <option value="AP">AP</option>
+                            <option value="AM">AM</option>
+                            <option value="BA">BA</option>
+                            <option value="CE">CE</option>
+                            <option value="DF">DF</option>
+                            <option value="ES">ES</option>
+                            <option value="GO">GO</option>
+                            <option value="MA">MA</option>
+                            <option value="MT">MT</option>
+                            <option value="MS">MS</option>
+                            <option value="MG">MG</option>
+                            <option value="PA">PA</option>
+                            <option value="PB">PB</option>
+                            <option value="PR">PR</option>
+                            <option value="PE">PE</option>
+                            <option value="PI">PI</option>
+                            <option value="RJ">RJ</option>
+                            <option value="RN">RN</option>
+                            <option value="RS">RS</option>
+                            <option value="RO">RO</option>
+                            <option value="RR">RR</option>
+                            <option value="SC">SC</option>
+                            <option value="SP">SP</option>
+                            <option value="SE">SE</option>
+                            <option value="TO">TO</option>
+                        </select>
+                        <span class="error-message" id="uf-error"></span>
+                    </div>
+                </div>
+
+                <div class="section-title">Detalhes do Produto</div>
+
+                <div class="form-group">
+                    <label for="produto">Produto:</label>
+                    <select id="produto" name="produto" required aria-required="true" onchange="atualizarCamposProduto()">
+                        <option value="">Selecione um produto</option>
+                        <option value="caneca">Caneca</option>
+                        <option value="caderno">Caderno</option>
+                    </select>
+                    <span class="error-message" id="produto-error"></span>
+                </div>
+
+                <div id="grupo-caneca" class="grupo-campos">
+                    <div class="form-group">
+                        <label for="tipo_caneca">Tipo de Caneca:</label>
+                        <select id="tipo_caneca" name="tipo_caneca">
+                            <option value="simples">Simples</option>
+                            <option value="personalizada">Personalizada</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cor_caneca">Cor da Caneca:</label>
+                        <select id="cor_caneca" name="cor_caneca">
+                            <option value="amarela">Amarela</option>
+                            <option value="azul">Azul</option>
+                            <option value="laranja">Laranja</option>
+                            <option value="verde">Verde</option>
+                            <option value="vermelha">Vermelha</option>
+                            <option value="rosa">Rosa</option>
+                            <option value="roxa">Roxa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="grupo-caderno" class="grupo-campos">
+                    <div class="form-group">
+                        <label for="tipo_caderno">Tipo de Caderno:</label>
+                        <select id="tipo_caderno" name="tipo_caderno">
+                            <option value="brochura">Brochura Capa Dura</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantidade_de_paginas">Quantidade de Páginas:</label>
+                        <select id="quantidade_de_paginas" name="quantidade_de_paginas">
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" name="quantidade" min="1" required aria-required="true" value="1">
+                    <span class="error-message" id="quantidade-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Escolha sua estampa:</label>
+                    <div class="miniaturas">
+                        <img src="static/astronauta.png"
+                             onclick="selecionarEstampa(this, 'static/astronauta.png')"
+                             alt="Estampa Astronauta no espaço" loading="lazy">
+                        <img src="static/bts01.png"
+                             onclick="selecionarEstampa(this, 'static/bts01.png')"
+                             alt="Estampa BTS" loading="lazy">
+                        <img src="static/divertidamente01.png"
+                             onclick="selecionarEstampa(this, 'static/divertidamente01.png')"
+                             alt="Estampa Divertidamente" loading="lazy">
+                        <img src="static/minions01.png"
+                             onclick="selecionarEstampa(this, 'static/minions01.png')"
+                             alt="Estampa Minions" loading="lazy">
+                        <img src="static/princesas.png"
+                             onclick="selecionarEstampa(this, 'static/princesas.png')"
+                             alt="Estampa Princesas Disney" loading="lazy">
+                        <img src="static/soccer.png"
+                             onclick="selecionarEstampa(this, 'static/soccer.png')"
+                             alt="Estampa Futebol" loading="lazy">
+                        <img src="static/sonic02.png"
+                             onclick="selecionarEstampa(this, 'static/sonic02.png')"
+                             alt="Estampa Sonic" loading="lazy">
+                        <img src="static/spider01.png"
+                             onclick="selecionarEstampa(this, 'static/spider01.png')"
+                             alt="Estampa Homem-Aranha" loading="lazy">
+                        <img src="static/sticth.png"
+                             onclick="selecionarEstampa(this, 'static/sticth.png')"
+                             alt="Estampa Stitch" loading="lazy">
+                    </div>
+                    <input type="hidden" id="estampa" name="estampa" required aria-required="true">
+                    <span class="error-message" id="estampa-error"></span>
+
+                    <div class="estampa-ampliada-container">
+                        <img id="estampa-ampliada" class="estampa-ampliada" src="" alt="Estampa selecionada para visualização">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="obs">Observações:</label>
+                    <textarea id="obs" name="obs" rows="4" placeholder="Detalhes adicionais sobre seu pedido"></textarea>
+                </div>
+
+                <button type="submit" aria-label="Enviar solicitação de orçamento">Solicitar Orçamento</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Modal para visualização ampliada -->
+    <div id="modal-estampa" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <h2 id="modal-title" class="sr-only">Visualização ampliada da estampa</h2>
+            <img id="modal-image" class="modal-image" src="" alt="Estampa em tamanho ampliado">
+            <span class="close" onclick="fecharModal()" aria-label="Fechar visualização">&times;</span>
+        </div>
+    </div>
+
+    <footer id="contato" role="contentinfo">
+        <div class="contato">
+            <h3>Contato Rápido</h3>
+           <p>Email: <a href="mailto:michelepersonalizados2025@gmail.com">michelepersonalizados2025@gmail.com</a></p>
+        </div>
+        <p>&copy; 2025 Michele Produtos Personalizados. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Função para mostrar seções
+        function mostrarSecao(secao) {
+            // Oculta todas as seções
+            document.querySelector('.sobre-section').style.display = 'none';
+            document.getElementById('conteudo-principal').style.display = 'block';
+            document.getElementById('contato').style.display = 'flex';
+
+            // Mostra a seção solicitada
+            if (secao === 'sobre') {
+                document.querySelector('.sobre-section').style.display = 'block';
+                document.getElementById('conteudo-principal').style.display = 'none';
+                window.scrollTo({
+                    top: document.querySelector('.sobre-section').offsetTop,
+                    behavior: 'smooth'
+                });
+            } else if (secao === 'inicio') {
+                document.getElementById('conteudo-principal').style.display = 'block';
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            } else if (secao === 'contato') {
+                window.scrollTo({
+                    top: document.getElementById('contato').offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Variável para armazenar a estampa selecionada
+        let estampaSelecionada = null;
+
+        function atualizarCamposProduto() {
+            const produto = document.getElementById('produto').value;
+            document.getElementById('grupo-caneca').style.display = produto === 'caneca' ? 'block' : 'none';
+            document.getElementById('grupo-caderno').style.display = produto === 'caderno' ? 'block' : 'none';
+
+            const imagem = document.getElementById('produto-principal');
+            if (produto === 'caneca') {
+                imagem.src = "static/caneca03.png";
+                imagem.alt = "Caneca personalizada";
+            } else if (produto === 'caderno') {
+                imagem.src = "static/soccer.png";
+                imagem.alt = "Caderno personalizado";
+            } else {
+                imagem.src = "static/tema_do_site.png";
+                imagem.alt = "Produto selecionado";
+            }
+
+            // Esconde a estampa ampliada se mudar de produto
+            document.getElementById('estampa-ampliada').style.display = 'none';
+            document.getElementById('estampa').value = '';
+            document.querySelectorAll('.miniaturas img').forEach(img => {
+                img.classList.remove('selecionado');
+            });
+        }
+
+        function selecionarEstampa(img, src) {
+            const imagens = document.querySelectorAll('.miniaturas img');
+            imagens.forEach(i => i.classList.remove('selecionado'));
+            img.classList.add('selecionado');
+            document.getElementById('estampa').value = img.alt;
+
+            // Atualiza a estampa ampliada
+            const estampaAmpliada = document.getElementById('estampa-ampliada');
+            estampaAmpliada.src = src;
+            estampaAmpliada.alt = img.alt;
+            estampaAmpliada.style.display = 'block';
+
+            // Armazena a estampa selecionada para o modal
+            estampaSelecionada = src;
+
+            // Mostra a visualização ampliada no modal
+            abrirModal(src, img.alt);
+        }
+
+        function abrirModal(src, alt) {
+            const modal = document.getElementById('modal-estampa');
+            const modalImg = document.getElementById('modal-image');
+            modal.style.display = "block";
+            modalImg.src = src;
+            modalImg.alt = alt;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-estampa').style.display = "none";
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fecha o modal se clicar fora da imagem
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal-estampa');
+            if (event.target == modal) {
+                fecharModal();
+            }
+        }
+
+        // Fecha o modal com tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                fecharModal();
+            }
+        });
+
+        // Máscara para CEP
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 8);
+            }
+            e.target.value = value;
+        });
+
+        // Máscara para telefone
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                value = '(' + value.substring(0, 2) + ') ' + value.substring(2);
+            }
+            if (value.length > 10) {
+                value = value.substring(0, 10) + '-' + value.substring(10, 14);
+            }
+            e.target.value = value;
+        });
+
+        // Validação em tempo real dos campos
+        function validarCampo(campo) {
+            const errorElement = document.getElementById(`${campo.id}-error`);
+
+            if (campo.validity.valid) {
+                errorElement.textContent = '';
+                errorElement.style.display = 'none';
+                campo.setAttribute('aria-invalid', 'false');
+            } else {
+                campo.setAttribute('aria-invalid', 'true');
+                if (campo.validity.valueMissing) {
+                    errorElement.textContent = 'Este campo é obrigatório';
+                } else if (campo.validity.typeMismatch) {
+                    errorElement.textContent = 'Formato inválido';
+                } else if (campo.validity.patternMismatch) {
+                    if (campo.id === 'cep') {
+                        errorElement.textContent = 'Formato de CEP inválido (XXXXX-XXX)';
+                    } else if (campo.id === 'telefone') {
+                        errorElement.textContent = 'Formato de telefone inválido (XX) XXXX-XXXX';
+                    } else if (campo.id === 'email') {
+                        errorElement.textContent = 'Formato de email inválido';
+                    }
+                } else if (campo.validity.rangeUnderflow) {
+                    errorElement.textContent = `Valor mínimo: ${campo.min}`;
+                }
+                errorElement.style.display = 'block';
+            }
+        }
+
+        // Adiciona validação em tempo real para todos os campos obrigatórios
+        document.querySelectorAll('[required]').forEach(campo => {
+            campo.addEventListener('input', () => validarCampo(campo));
+            campo.addEventListener('blur', () => validarCampo(campo));
+        });
+
+        // Mostra mensagem de status
+        function showMessage(message, isError = false) {
+            const element = document.getElementById('status-message');
+            element.textContent = message;
+            element.style.display = 'block';
+            element.className = isError ? 'flash-message error' : 'flash-message success';
+
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // Mostra/oculta loading
+        function toggleLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        // Envio do formulário via AJAX
+        document.getElementById('form-orcamento').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            let formValido = true;
+
+            // Valida todos os campos obrigatórios
+            document.querySelectorAll('[required]').forEach(campo => {
+                validarCampo(campo);
+                if (!campo.validity.valid) {
+                    formValido = false;
+                }
+            });
+
+            // Validação específica para estampa quando produto é caneca
+            const produto = document.getElementById('produto').value;
+            const estampa = document.getElementById('estampa').value;
+
+            if (produto === 'caneca' && !estampa) {
+                document.getElementById('estampa-error').textContent = 'Por favor, selecione uma estampa';
+                document.getElementById('estampa-error').style.display = 'block';
+                formValido = false;
+            }
+
+            if (!formValido) {
+                // Rola até o primeiro erro
+                const primeiroErro = document.querySelector('[aria-invalid="true"]');
+                if (primeiroErro) {
+                    primeiroErro.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    primeiroErro.focus();
+                }
+                return;
+            }
+
+            // Se o formulário estiver válido, envia
+            toggleLoading(true);
+
+            try {
+                const formData = new FormData(this);
+
+                // Adiciona logs para depuração
+                console.log('Dados do formulário:', Object.fromEntries(formData.entries()));
+
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                console.log('Resposta do servidor:', result);
+
+                if (result.success) {
+                    showMessage('Orçamento enviado com sucesso! Em breve entraremos em contato.');
+                    this.reset();
+                    atualizarCamposProduto();
+                } else {
+                    showMessage('Erro ao enviar orçamento: ' + (result.message || 'Tente novamente mais tarde.'), true);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showMessage('Erro na comunicação com o servidor. Por favor, tente novamente.', true);
+            } finally {
+                toggleLoading(false);
+            }
+        });
+
+        // Inicializa o formulário
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simula o token CSRF (em produção, isso deve vir do servidor)
+            document.getElementById('csrf_token').value = 'simulated-csrf-token-' + Math.random().toString(36).substr(2);
+
+            atualizarCamposProduto();
+
+            // Classe para elementos visualmente ocultos mas acessíveis
+            const style = document.createElement('style');
+            style.textContent = `
+                .sr-only {
+                    position: absolute;
+                    width: 1px;
+                    height: 1px;
+                    padding: 0;
+                    margin: -1px;
+                    overflow: hidden;
+                    clip: rect(0, 0, 0, 0);
+                    white-space: nowrap;
+                    border-width: 0;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
