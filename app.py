@@ -1,21 +1,31 @@
-from flask import Flask, render_template, request, jsonify, current_app
-from flask_sqlalchemy import SQLAlchemy
-from models import db, Orcamento
+import logging
 import os
 import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv
-import logging
-from logging.handlers import RotatingFileHandler
 from datetime import datetime, timezone
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from logging.handlers import RotatingFileHandler
+from typing import Union, List
+
+from dotenv import load_dotenv
+from flask import Flask, render_template, request, jsonify
+from flask_mail import Mail
 from flask_wtf.csrf import CSRFProtect
-from flask_mail import Mail, Message
+
+from models import db, Orcamento
 
 # Carrega variáveis de ambiente
 load_dotenv()
 
 app = Flask(__name__)
+
+# Carrega o template
+with open('templates/email_cliente.html', 'r', encoding='utf-8') as file:
+    template_cliente = file.read()
+
+# Carrega o template
+with open('templates/email_admin.html', 'r', encoding='utf-8') as file:
+    template_admin = file.read()
 
 # Configuração do CSRF
 csrf = CSRFProtect(app)
@@ -32,14 +42,15 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME', 'nivioricardo@hotmail.com')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD', '')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', 'nivioricardo@hotmail.com')
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 app.config['MAIL_TIMEOUT'] = 30
 
 # Inicializa extensões
 mail = Mail(app)
 db.init_app(app)
+
 
 # Configuração de logging melhorada
 def configure_logging():
@@ -61,57 +72,71 @@ def configure_logging():
     app.logger.setLevel(logging.INFO)
     app.logger.info('Aplicação de orçamentos iniciada')
 
+
 configure_logging()
 
 # Cria as tabelas do banco de dados
 with app.app_context():
     db.create_all()
 
-def enviar_email(destinatario, assunto, template, **kwargs):
-    """Função genérica para envio de emails"""
+
+def enviar_email(destinatario: Union[str, List[str]], assunto: str, template: str, **kwargs) -> bool:
+    """
+    Função completa para envio de e-mails com template HTML
+
+    Args:
+        destinatario: E-mail ou lista de e-mails
+        assunto: Assunto do e-mail
+        template: Template HTML como string com {{var}} ou {var}
+        **kwargs: Variáveis para substituição (ex: nome="João")
+
+    Returns:
+        bool: True se enviado com sucesso
+    """
     try:
-        msg = MIMEMultipart()
+        # 1. Substitui variáveis no template (para {{var}} e {var})
+        html = template
+        for key, value in kwargs.items():
+            html = html.replace(f'{{{{{key}}}}}', str(value))  # Para {{var}}
+            html = html.replace(f'{{{key}}}', str(value))  # Para {var}
+
+        # 2. Configurações do Gmail
+        email_remetente = os.getenv("MAIL_GMAIL")
+        email_password = os.getenv("MAIL_PASSWORD")
+
+        if not email_remetente or not email_password:
+            raise ValueError("Credenciais de e-mail não configuradas")
+
+        # 3. Cria mensagem MIME
+        msg = MIMEMultipart('alternative')
+        msg['From'] = email_remetente
+        msg['To'] = ', '.join([destinatario] if isinstance(destinatario, str) else destinatario)
         msg['Subject'] = assunto
-        msg['From'] = app.config['MAIL_DEFAULT_SENDER']
-        msg['To'] = destinatario
 
-        if 'Reply-To' in kwargs:
-            msg['Reply-To'] = kwargs['Reply-To']
+        # 4. Adiciona partes (texto e HTML)
+        part1 = MIMEText("Versão em texto simples para clientes que não suportam HTML", 'plain', 'utf-8')
+        part2 = MIMEText(html, 'html', 'utf-8')
+        msg.attach(part1)
+        msg.attach(part2)
 
-        html = render_template(template, **kwargs)
-        msg.attach(MIMEText(html, 'html'))
+        # 5. Envia usando SMTP (método que evita problema ASCII)
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(email_remetente, email_password)
+            server.send_message(msg)  # Usando send_message em vez de sendmail
 
-        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
-            server.ehlo()
-            if app.config['MAIL_USE_TLS']:
-                server.starttls()
-                server.ehlo()
-            # Adicionado debug para verificar autenticação
-            server.set_debuglevel(1)
-            server.login(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-            server.send_message(msg)
-
-        app.logger.info(f"Email enviado para {destinatario}")
         return True
 
-    except smtplib.SMTPAuthenticationError as e:
-        app.logger.error(f"Falha de autenticação SMTP ao enviar para {destinatario}. Verifique: "
-                        f"1. Se a senha de aplicativo está correta "
-                        f"2. Se a autenticação de dois fatores está ativada "
-                        f"3. Se o acesso de aplicativos menos seguros está ativado (não recomendado). "
-                        f"Erro detalhado: {str(e)}")
-        return False
-    except smtplib.SMTPException as e:
-        app.logger.error(f"Erro SMTP ao enviar para {destinatario}: {str(e)}")
-        return False
     except Exception as e:
-        app.logger.error(f"Erro inesperado ao enviar email: {str(e)}", exc_info=True)
+        app.logger.error(f"Erro ao enviar e-mail: {str(e)}", exc_info=True)
         return False
+
 
 @app.route('/')
 def index():
     """Rota principal que renderiza o template HTML"""
     return render_template('index.html')
+
 
 @app.route('/enviar_orcamento', methods=['POST'])
 @csrf.exempt  # Remova em produção!
@@ -179,22 +204,21 @@ def enviar_orcamento():
             db.session.add(novo_orcamento)
             db.session.commit()
 
-            # Envia os emails
-            email_admin_ok = enviar_email(
-                app.config['MAIL_DEFAULT_SENDER'],
-                f"Novo Orçamento - {dados_orcamento['nome']}",
-                'email_admin.html',
-                **dados_orcamento
-            )
-
             email_cliente_ok = enviar_email(
-                dados_orcamento['email'],
+                [dados_orcamento['email']],
                 "Recebemos seu orçamento - Micheli Personalizados",
-                'email_cliente.html',
+                template_cliente,
                 **dados_orcamento
             )
 
-            if not all([email_admin_ok, email_cliente_ok]):
+            email_adm_ok = enviar_email(
+                [os.getenv("MAIL_GMAIL"), dados_orcamento['email']],
+                "Recebemos seu orçamento - Micheli Personalizados",
+                template_admin,
+                **dados_orcamento
+            )
+
+            if not all([email_adm_ok, email_cliente_ok]):
                 app.logger.warning(f"Orçamento {novo_orcamento.id} salvo, mas emails falharam parcialmente")
 
             return jsonify({
@@ -217,6 +241,7 @@ def enviar_orcamento():
                 'success': False,
                 'message': 'Erro interno ao processar seu orçamento.'
             }), 500
+
 
 @app.route('/test_smtp')
 def test_smtp():
@@ -248,6 +273,7 @@ def test_smtp():
             'success': False,
             'message': f"Erro na conexão SMTP: {str(e)}"
         }), 500
+
 
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)

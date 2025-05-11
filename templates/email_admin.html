@@ -1,2 +1,163 @@
-<h2>Novo Orçamento Solicitado</h2>
-<!-- Conteúdo do email para admin -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Orçamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 0 0 5px 5px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .section-title {
+            color: #4a6fa5;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        .info-label {
+            font-weight: bold;
+            width: 200px;
+            color: #555;
+        }
+        .info-value {
+            flex: 1;
+            padding: 5px;
+            background-color: #fff;
+            border-radius: 3px;
+        }
+        .status {
+            display: inline-block;
+            padding: 3px 10px;
+            background-color: #ffeb3b;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #333;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Detalhes do Orçamento</h1>
+        <div class="status">{status}</div>
+    </div>
+
+    <div class="content">
+        <!-- Informações do Cliente -->
+        <div class="section">
+            <h2 class="section-title">Informações do Cliente</h2>
+            <div class="info-row">
+                <div class="info-label">Nome:</div>
+                <div class="info-value">{nome}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">E-mail:</div>
+                <div class="info-value">{email}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Telefone:</div>
+                <div class="info-value">{telefone}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Data:</div>
+                <div class="info-value">{data_criacao}</div>
+            </div>
+        </div>
+
+        <!-- Endereço -->
+        <div class="section">
+            <h2 class="section-title">Endereço</h2>
+            <div class="info-row">
+                <div class="info-label">Rua/Número:</div>
+                <div class="info-value">{rua}, {numero}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Complemento:</div>
+                <div class="info-value">{complemento}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Bairro:</div>
+                <div class="info-value">{bairro}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Cidade/UF:</div>
+                <div class="info-value">{cidade}/{uf}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">CEP:</div>
+                <div class="info-value">{cep}</div>
+            </div>
+        </div>
+
+        <!-- Produto -->
+        <div class="section">
+            <h2 class="section-title">Detalhes do Produto</h2>
+            <div class="info-row">
+                <div class="info-label">Produto:</div>
+                <div class="info-value">{produto}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Tipo:</div>
+                <div class="info-value">{tipo_produto}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Cor:</div>
+                <div class="info-value">{cor}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Quantidade:</div>
+                <div class="info-value">{quantidade}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Quant. Páginas:</div>
+                <div class="info-value">{quantidade_paginas}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Estampa:</div>
+                <div class="info-value">{estampa}</div>
+            </div>
+        </div>
+
+        <!-- Observações -->
+        <div class="section">
+            <h2 class="section-title">Observações</h2>
+            <div class="info-value" style="white-space: pre-line;">{observacoes}</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>IP do cliente: {ip_cliente}</p>
+        <p>Micheli Personalizados - {data_criacao}</p>
+    </div>
+</body>
+</html>
