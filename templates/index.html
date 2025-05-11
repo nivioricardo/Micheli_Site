@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Orçamento de produtos personalizados - Canecas e cadernos personalizados para presentear">
     <title>Orçamento de Produtos Personalizados | Micheli Personalizados</title>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -296,52 +298,11 @@
             border-bottom: 1px solid #ddd;
         }
 
-        .flash-message {
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            text-align: center;
-            display: none;
-        }
-
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
         .error-message {
             color: #e74c3c;
             font-size: 12px;
             margin-top: 5px;
             display: none;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #1d3c2d;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         @keyframes zoom {
@@ -417,13 +378,6 @@
 
     <main id="conteudo-principal" role="main">
         <h1>Solicite seu Orçamento</h1>
-
-        <!-- Mensagens de status -->
-        <div id="status-message" class="flash-message"></div>
-        <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
-            <p>Enviando seu orçamento...</p>
-        </div>
 
         <div class="container">
             <img id="produto-principal" class="product-image" src="static/tema_do_site.png" alt="Caneca personalizada - Produto selecionado" loading="lazy">
@@ -658,7 +612,12 @@
         <p>&copy; 2025 Michele Produtos Personalizados. Todos os direitos reservados.</p>
     </footer>
 
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Variável para controlar o loading do SweetAlert
+        let loadingAlert = null;
+
         // Função para mostrar seções
         function mostrarSecao(secao) {
             // Oculta todas as seções
@@ -820,21 +779,41 @@
             campo.addEventListener('blur', () => validarCampo(campo));
         });
 
-        // Mostra mensagem de status
+        // Mostra mensagem usando SweetAlert2
         function showMessage(message, isError = false) {
-            const element = document.getElementById('status-message');
-            element.textContent = message;
-            element.style.display = 'block';
-            element.className = isError ? 'flash-message error' : 'flash-message success';
-
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 5000);
+            if (isError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: message,
+                    confirmButtonColor: '#1d3c2d'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso',
+                    text: message,
+                    confirmButtonColor: '#1d3c2d',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
         }
 
-        // Mostra/oculta loading
+        // Mostra/oculta loading usando SweetAlert2
         function toggleLoading(show) {
-            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            if (show) {
+                loadingAlert = Swal.fire({
+                    title: 'Enviando seu orçamento...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            } else if (loadingAlert) {
+                loadingAlert.close();
+                loadingAlert = null;
+            }
         }
 
         // Envio do formulário via AJAX
@@ -862,6 +841,14 @@
             }
 
             if (!formValido) {
+                // Mostra SweetAlert para erros de formulário
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Formulário incompleto',
+                    text: 'Por favor, preencha todos os campos obrigatórios corretamente.',
+                    confirmButtonColor: '#1d3c2d'
+                });
+
                 // Rola até o primeiro erro
                 const primeiroErro = document.querySelector('[aria-invalid="true"]');
                 if (primeiroErro) {
@@ -880,9 +867,6 @@
             try {
                 const formData = new FormData(this);
 
-                // Adiciona logs para depuração
-                console.log('Dados do formulário:', Object.fromEntries(formData.entries()));
-
                 const response = await fetch(this.action, {
                     method: 'POST',
                     body: formData,
@@ -892,7 +876,6 @@
                 });
 
                 const result = await response.json();
-                console.log('Resposta do servidor:', result);
 
                 if (result.success) {
                     showMessage('Orçamento enviado com sucesso! Em breve entraremos em contato.');

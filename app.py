@@ -212,7 +212,7 @@ def enviar_orcamento():
             )
 
             email_adm_ok = enviar_email(
-                [os.getenv("MAIL_GMAIL"), dados_orcamento['email']],
+                [os.getenv("MAIL_GMAIL")],
                 "Recebemos seu orçamento - Micheli Personalizados",
                 template_admin,
                 **dados_orcamento
