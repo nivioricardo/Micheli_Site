@@ -111,10 +111,16 @@
         }
 
         .product-image {
-            width: 280px;
+            width: 700px; /* Aumente este valor */
             border-radius: 10px;
             object-fit: cover;
             height: auto;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); /* Adicione sombra para destaque */
+            transition: transform 0.3s ease; /* Efeito de hover */
+        }
+
+        .product-image:hover {
+            transform: scale(1.03); /* Efeito de zoom leve ao passar o mouse */
         }
 
         .formulario {
